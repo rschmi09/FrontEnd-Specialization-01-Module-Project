@@ -1,73 +1,72 @@
-# React + TypeScript + Vite
+README.md
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+-------------------------------------
+Project Overview
+-------------------------------------
+Frontend Specialization 01 Module Project
 
-Currently, two official plugins are available:
+Goal: 
+Create an 'Advanced' React E-Commerce web App 
+utilizing React Query to fetch products from
+a fake store API and Redux Toolkit to manage 
+the shopping cart state.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## React Compiler
+-------------------------------------
+Project Installations
+-------------------------------------
+Creation: vite@latest
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Installs:
+- axios
+- react-dom
+- react-router-dom
+- @tanstack/react-query
+- redux react-redux @reduxjs/toolkit
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+-------------------------------------
+Project Architecture
+-------------------------------------
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+src
+|
+|_ components
+|   |_CategoryNav.tsx
+|   |_Products.tsx
+|   |_ShoppingCart.tsx
+|
+|
+|_redux
+|    |_cartSlice.ts
+|    |_selectors.ts
+|    |_store.ts
+|
+|
+|_ pages
+|   |_Home.tsx
+|
+|
+|_ types
+|   |_types.ts
+|
+|
+|_App.txs
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+-------------------------------------
+Project Useage 
+-------------------------------------
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+A homepage displays all products fetched from the 
+ake store API, a dropdown to choose a product category 
+which displays just that category of products, and a
+navbar allowing access to the shopping cart and Home 
+pages. Users are able to add a product to thier cart
+directly from the Home page and when viewing the 
+shopping cart, the total number of items and the 
+total price are displayed. When the user 'checks out'
+the cart is cleared and they receive a notice that 
+thier checkout is successful and the cart has been
+cleared.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
