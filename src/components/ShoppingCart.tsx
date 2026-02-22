@@ -2,7 +2,7 @@
 
 import { useSelector, useDispatch } from 'react-redux'
 import type { AppDispatch } from '../redux/store'
-import { removeFromCart, clearCart } from '../redux/cartSlice'
+import { updateQuantity, removeFromCart, clearCart } from '../redux/cartSlice'
 import type { Product } from '../types/types'
 import { selectCart, selectTotalCount, selectTotalPrice } from '../redux/selectors' 
 
@@ -48,8 +48,14 @@ const ShoppingCart = () => {
                     <p>Price: ${item.price.toFixed(2)}</p>
                     <p>Quantity: ${item.count ?? 0}</p>
 
+                    <div>
+                        <button onClick={() => dispatch(updateQuantity({ id: item.id, count: item.count - 1 }))}>-</button>
+                        <span>{item.count}</span>
+                        <button onClick={() => dispatch(updateQuantity({ id: item.id, count: item.count + 1 }))}>+</button>
+                    </div>
+
                     <button onClick={() => dispatch(removeFromCart(item.id))}>
-                        Rremove
+                        Remove
                     </button>
 
                 </div>

@@ -15,3 +15,7 @@ export type Product = {
 };
 
 export type CartState = Product[];
+
+export type CartItem = Product & {
+  count: number
+}
