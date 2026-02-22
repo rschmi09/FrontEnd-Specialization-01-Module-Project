@@ -19,13 +19,23 @@ const App = () => {
       {/* NavBar */}
       <nav style={{
         padding: '1rem',
-        borderBottom: '1px solid gray'
+        borderBottom: '1px solid gray',
+        backgroundColor: 'white',
         }}
       >
-        <Link to='/' style={{ marginRight: '1rem' }}>Home</Link>
+        <Link to='/' style={{ 
+          marginRight: '1rem',
+          fontWeight: 'bold',
+          color: 'black' 
+          }}
+        >
+          Home
+        </Link>
+
         <Link to='/cart' style={{
           marginLeft: 'auto',
-          fontWeight: 'bold'
+          fontWeight: 'bold',
+          color: 'black'
           }}
         >
           Cart ({totalCount})
