@@ -34,7 +34,7 @@ const CategoryNav = ({ selectedCategory, setSelectedCategory }: Props) => {
             <option value=''>All Categories</option>
 
             {data?.map(category => (
-                <option key={category} value={category}></option>
+                <option key={category} value={category}>{category}</option>
             ))}
 
         </select>
