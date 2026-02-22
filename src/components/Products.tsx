@@ -43,14 +43,10 @@ const Products = ({ selectedCategory }: Props) => {
     if (!data) return null;
 
     return (
-        <div>
+        <div className='products-container'>
 
             {data.map(product => (
-                <div key={product.id} style={{ 
-                    border: '1px solid gray',
-                    margin: '1rem',
-                    padding: '1rem'
-                }}>
+                <div key={product.id} className='product-card'>
 
                     <h2>{product.title}</h2>
 
