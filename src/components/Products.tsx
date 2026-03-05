@@ -3,10 +3,11 @@
 // Fetch data using 'useQuery'
 
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/cartSlice';
-import type { Product } from '../types/types'
+import type { Product } from '../types/types';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 
 type Props = {
@@ -17,35 +18,41 @@ type Props = {
 const placeholderImage = 'https://via.placeholder.com/150';
 
 // Fetch function
-const fetchProducts = async (category: string): Promise<Product[]> => {
-    const url = category
-        ? `https://fakestoreapi.com/products/category/${category}`
-        : 'https://fakestoreapi.com/products'
+const fetchProducts = async (): Promise<Product[]> => {
+    const querySnapshot = await getDocs(collection(db, 'products'));
     
-    const response = await axios.get(url);
-    return response.data;
-}
+    const products: Product[] = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<Product, 'id'>)
+    }));
+
+    return products;
+};
+
 const Products = ({ selectedCategory }: Props) => {
     const dispatch = useDispatch();
 
-    // Using 'useQuery' to fetch products
-
-    // Error Handling
+    // useQuery
     const { data, isLoading, error } = useQuery({
-        queryKey: ['products', selectedCategory],
-        queryFn: () => fetchProducts(selectedCategory)
+        queryKey: ['products'],
+        queryFn: fetchProducts
     });
 
+    // Error Handling
     if (isLoading) return <p>Loading...</p>;
     if (error instanceof Error) {
         return <p>Error: {error.message}</p>
     }
     if (!data) return null;
 
+    const filteredProducts = selectedCategory
+        ? data.filter(p => p.category === selectedCategory)
+        : data;
+
     return (
         <div className='products-container'>
 
-            {data.map(product => (
+            {filteredProducts.map(product => (
                 <div key={product.id} className='product-card'>
 
                     <h2>{product.title}</h2>
@@ -73,8 +80,8 @@ const Products = ({ selectedCategory }: Props) => {
             ))}
 
         </div>
-    )
+    );
 
-}
+};
 
 export default Products;

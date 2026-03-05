@@ -5,6 +5,8 @@ import type { AppDispatch } from '../redux/store'
 import { updateQuantity, removeFromCart, clearCart } from '../redux/cartSlice'
 import type { Product } from '../types/types'
 import { selectCart, selectTotalCount, selectTotalPrice } from '../redux/selectors' 
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 
 const ShoppingCart = () => {
@@ -16,9 +18,19 @@ const ShoppingCart = () => {
     const totalPrice: number = useSelector(selectTotalPrice);
 
     // Handle Checkout
-    const handleCheckout = (): void => {
+    const handleCheckout = async (): Promise<void> => {
+
+        const order = {
+            userId: 'authUser',
+            createdAt: serverTimestamp(),
+            product: cart,
+            totalPrice
+        }
+        
+        await addDoc(collection(db, 'orders'), order)       
+        
         dispatch(clearCart())
-        alert('Checkout successful! Your cart has been cleared.')
+        alert('order placed successfuly! Your cart has been cleared.')
     }
 
     if (!cart.length) return <p>Your cart is empty</p>
@@ -46,12 +58,30 @@ const ShoppingCart = () => {
                     />
 
                     <p>Price: ${item.price.toFixed(2)}</p>
-                    <p>Quantity: ${item.count ?? 0}</p>
+                    <p>Quantity: {item.count ?? 0}</p>
 
                     <div>
-                        <button onClick={() => dispatch(updateQuantity({ id: item.id, count: item.count - 1 }))}>-</button>
+                        <button 
+                            onClick={() => 
+                                dispatch(updateQuantity({ 
+                                    id: item.id, 
+                                    count: (item.count ?? 0) - 1 
+                                }))
+                            }
+                        >
+                            -
+                        </button>
                         <span>{item.count}</span>
-                        <button onClick={() => dispatch(updateQuantity({ id: item.id, count: item.count + 1 }))}>+</button>
+                        <button 
+                            onClick={() => 
+                                dispatch(updateQuantity({ 
+                                    id: item.id, 
+                                    count: (item.count ?? 0) + 1 
+                                }))
+                            }
+                        >
+                            +
+                        </button>
                     </div>
 
                     <button onClick={() => dispatch(removeFromCart(item.id))}>

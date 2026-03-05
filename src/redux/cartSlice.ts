@@ -1,4 +1,4 @@
-// src/redux/csrtSlice.ts
+// src/redux/cartSlice.ts
 
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
@@ -30,22 +30,25 @@ const cartSlice = createSlice({
 
         updateQuantity: (
             state,
-            action: PayloadAction<{ id: number; count: number }>
+            action: PayloadAction<{ id: string; count: number }>
         ) => {
             const item = state.find((i) => i.id === action.payload.id)
-            if (item) {
-                item.count = action.payload.count
+            
+            if (!item) return   // exit if item not found
+            
+            if ((item.count ?? 0) <=0) {
+                return state.filter(i => i.id !== action.payload.id)
                 // remove if 0
-                if (item.count <= 0) {
-                    const index = state.findIndex((i) => i.id === action.payload.id)
-                    state.splice(index, 1)
-                }
+                //if (item.count <= 0) {
+                    //const index = state.findIndex((i) => i.id === action.payload.id)
+                    //state.splice(index, 1)
+                //}
             }
 
             saveToSession(state)
         },
 
-           removeFromCart: (state: CartState, action: PayloadAction<number>) => {
+           removeFromCart: (state: CartState, action: PayloadAction<string>) => {
             const index = state.findIndex(item => item.id == action.payload)
             if (index >= 0) {
                 state.splice(index, 1)
