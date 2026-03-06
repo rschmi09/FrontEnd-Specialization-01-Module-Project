@@ -9,15 +9,17 @@ const Home = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('')
 
     return (
-        <div style={{ padding: '2rem' }}>
-        
-            <h1>Fake Store Products</h1>
+        <div>
+            <div className='home-header'>
+                <h1>Fake Store Products</h1>
 
-            {/* Category dropdown */}
-            <CategoryNav
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-            />
+                {/* Category dropdown */}
+                <CategoryNav
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                />
+            </div>
+
 
             {/* Products list filtered by category */}
             <Products selectedCategory={selectedCategory} />

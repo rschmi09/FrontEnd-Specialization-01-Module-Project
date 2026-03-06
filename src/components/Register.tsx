@@ -8,6 +8,7 @@ import { auth } from '../firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { serverTimestamp } from 'firebase/firestore';
+import { useNavigate, Link } from 'react-router-dom';
 
 
 const Register = () => {
@@ -15,10 +16,13 @@ const Register = () => {
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
 
+    const navigate = useNavigate();
+
     const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
+
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password.trim());
             const user = userCredential.user;
 
             // firestore 'user' document
@@ -28,6 +32,7 @@ const Register = () => {
             });
 
             alert('Registration successful!');
+            navigate('/');      // redirect to home
 
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -39,23 +44,33 @@ const Register = () => {
     }
 
     return (
-        <form onSubmit={handleRegister}>
-            <input
-                type='email'
-                placeholder='Email'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-                type='password'
-                placeholder='Password'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
+        <div style={{ padding: '2rem' }}>
+            <h2>Register</h2>
 
-            <button type='submit'>Register</button>
-            {error && <p>{error}</p>}
-        </form>
+            <form onSubmit={handleRegister}>
+                <input
+                    type='email'
+                    placeholder='Email'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <input
+                    type='password'
+                    placeholder='Password'
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+
+                <button type='submit'>Register</button>
+                {error && <p>{error}</p>}
+
+            </form>
+
+            <p>
+                Already have an account? <Link to='/login'>Login</Link>
+            </p>
+
+        </div>
     );
 
 };

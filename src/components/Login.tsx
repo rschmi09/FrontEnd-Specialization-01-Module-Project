@@ -1,21 +1,27 @@
 // src/components/Login.tsx
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { FormEvent } from 'react';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
 import { auth } from '../firebaseConfig';
+
 
 const Login = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
 
+    const navigate = useNavigate();
+
     const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
+
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            alert('Login Successful!')
+            await signInWithEmailAndPassword(auth, email.trim(), password.trim());
+            navigate('/');
+
         }   catch (err: unknown) {
             if (err instanceof FirebaseError) {
                 setError(err.message);
@@ -25,22 +31,12 @@ const Login = () => {
         }   
     };
 
-    const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            alert('Logged out')
-        }   catch (err: unknown) {
-            if (err instanceof Error) {
-                console.error('Logout error:', err.message);
-            } else {
-                console.error('Unexpected logout error');
-            }
-        }
-    };
-
     return (
         <>
             <form onSubmit={handleLogin}>
+
+                <h2>Login</h2>
+
                 <input
                     type='email'
                     placeholder='Email'
@@ -58,7 +54,7 @@ const Login = () => {
                 {error && <p>{error}</p>}        
             </form>
 
-            <button onClick={handleLogout}>Logout</button>
+            
         
         </>
     );

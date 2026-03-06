@@ -1,52 +1,106 @@
 // src/App.tsx
 
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import './App.css'
 import ShoppingCart from './components/ShoppingCart'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { selectTotalCount } from './redux/selectors'
+import { useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import type { User } from 'firebase/auth';
+import { auth } from './firebaseConfig';
+import { setUser, clearUser } from './redux/authSlice';
+import type { AppDispatch, RootState } from './redux/store';
+import Login from './components/Login';
+import Register from './components/Register';
+import { handleLogout } from './components/Logout';
+import ProtectedRoute from './components/ProtectedRoute';
 
 
 const App = () => {
+  const dispatch = useDispatch<AppDispatch>();
 
-    // get total item count from Redux
-    const totalCount = useSelector(selectTotalCount);
+  // get total item count from Redux
+  const totalCount = useSelector(selectTotalCount);
+
+    // Access current user anywhere
+  const currentUser = useSelector((state: RootState) => state.auth.currentUser);
+
+  const location = useLocation();
+  
+  // Show NavBar only on non-login/register pages
+  const showNav = location.pathname !== '/login' && location.pathname !== '/register';
+
+  // Listen to Firebase Auth changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
+      if (user) {
+        dispatch(setUser(user));      //store logged-in user in Redux
+      } else {
+        dispatch(clearUser());        // clear user on logout
+      }
+    });
+
+    return () => unsubscribe();
+  }, [dispatch]);
+
 
   return (
-    <div>
+    <div className='app-container'>
 
       {/* NavBar */}
-      <nav style={{
-        padding: '1rem',
-        borderBottom: '1px solid gray',
-        backgroundColor: 'white',
-        }}
-      >
-        <Link to='/' style={{ 
-          marginRight: '1rem',
-          fontWeight: 'bold',
-          color: 'black' 
-          }}
-        >
-          Home
-        </Link>
+      {showNav && (
+        <nav className='navbar'>
 
-        <Link to='/cart' style={{
-          marginLeft: 'auto',
-          fontWeight: 'bold',
-          color: 'black'
-          }}
-        >
-          Cart ({totalCount})
-        </Link> 
+          <div className='navbar-left'>
+            <Link to='/' >Home</Link>
+            {currentUser && <span>Welcome, {currentUser.email}</span>}
+          </div>
 
-      </nav>
+          <div className='navbar-right'>
+            <Link to='/cart'>Cart ({totalCount})</Link> 
+            {currentUser && <button onClick={handleLogout}>Logout</button>}
+          </div>
+          
+        </nav>
+      )}
 
-      {/* Route Definitations */}
+      {/* Route Definitions */}
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/cart' element={<ShoppingCart />} />
+        {/* Redirect to login if not logged in */}
+        <Route 
+          path='/' 
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Auth pages */}
+        <Route 
+          path='/login' 
+          element={<Login />}
+        />
+        <Route 
+          path='/register' 
+          element={!currentUser ? <Register /> : <Navigate to='/' />}
+        />
+
+        {/* Cart page requires login */}
+        <Route 
+          path='/cart' 
+          element={
+            <ProtectedRoute>
+              <ShoppingCart />
+            </ProtectedRoute>
+            } 
+        />
+
+        {/* Catch-all redirect */}
+        <Route path='*' element={<Navigate to='/' replace />} />
+
       </Routes>
 
     </div>

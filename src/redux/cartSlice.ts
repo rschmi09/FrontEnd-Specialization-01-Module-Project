@@ -32,17 +32,18 @@ const cartSlice = createSlice({
             state,
             action: PayloadAction<{ id: string; count: number }>
         ) => {
-            const item = state.find((i) => i.id === action.payload.id)
+            const { id, count } = action.payload;
+            const item = state.find(i => i.id === id)
             
             if (!item) return   // exit if item not found
             
-            if ((item.count ?? 0) <=0) {
-                return state.filter(i => i.id !== action.payload.id)
-                // remove if 0
-                //if (item.count <= 0) {
-                    //const index = state.findIndex((i) => i.id === action.payload.id)
-                    //state.splice(index, 1)
-                //}
+            if (count <=0) {
+                // remove item if count is 0 or less
+                const index = state.findIndex(i => i.id === id);
+                if (index >= 0) state.splice(index, 1);
+            } else {
+                // update count
+                item.count = count;
             }
 
             saveToSession(state)

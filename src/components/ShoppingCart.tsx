@@ -36,7 +36,7 @@ const ShoppingCart = () => {
     if (!cart.length) return <p>Your cart is empty</p>
 
     return (
-        <div>
+        <div className='shopping-cart-container'>
 
             <h2>Shopping Cart</h2>
            
@@ -44,11 +44,8 @@ const ShoppingCart = () => {
                 
                 <div 
                     key={item.id} 
-                    style={{ 
-                        border: '1px solid gray', 
-                        margin: '1rem',
-                        padding: '1rem'
-                    }}>
+                    className='cart-item-card'
+                >
 
                     <h3>{item.title}</h3>
                     <img 
@@ -60,7 +57,7 @@ const ShoppingCart = () => {
                     <p>Price: ${item.price.toFixed(2)}</p>
                     <p>Quantity: {item.count ?? 0}</p>
 
-                    <div>
+                    <div className='quantity-controls'>
                         <button 
                             onClick={() => 
                                 dispatch(updateQuantity({ 
