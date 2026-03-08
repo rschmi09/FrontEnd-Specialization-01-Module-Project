@@ -15,6 +15,7 @@ import type { AppDispatch, RootState } from './redux/store';
 import Login from './components/Login';
 import Register from './components/Register';
 import { handleLogout } from './components/Logout';
+import ProductManagement from './components/ProductManagement';
 import ProtectedRoute from './components/ProtectedRoute';
 
 
@@ -55,14 +56,14 @@ const App = () => {
 
           <div className='navbar-left'>
             <Link to='/' >Home</Link>
-            {currentUser && <span>Welcome, {currentUser.email}</span>}
+            <Link to='/product-management' >Product Management</Link>
           </div>
 
           <div className='navbar-right'>
             <Link to='/cart'>Cart ({totalCount})</Link> 
             {currentUser && <button onClick={handleLogout}>Logout</button>}
           </div>
-          
+
         </nav>
       )}
 
@@ -96,6 +97,16 @@ const App = () => {
               <ShoppingCart />
             </ProtectedRoute>
             } 
+        />
+
+        {/* Product Management */}
+        <Route
+          path='product-management'
+          element={
+            <ProtectedRoute>
+              <ProductManagement />
+            </ProtectedRoute>
+          }
         />
 
         {/* Catch-all redirect */}

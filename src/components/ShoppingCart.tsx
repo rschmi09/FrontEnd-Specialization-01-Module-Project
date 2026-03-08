@@ -7,6 +7,8 @@ import type { Product } from '../types/types'
 import { selectCart, selectTotalCount, selectTotalPrice } from '../redux/selectors' 
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import OrderHistory from './OrderHistory';
+import { auth } from '../firebaseConfig';
 
 
 const ShoppingCart = () => {
@@ -21,7 +23,7 @@ const ShoppingCart = () => {
     const handleCheckout = async (): Promise<void> => {
 
         const order = {
-            userId: 'authUser',
+            userId: auth.currentUser?.uid,
             createdAt: serverTimestamp(),
             product: cart,
             totalPrice
@@ -33,13 +35,18 @@ const ShoppingCart = () => {
         alert('order placed successfuly! Your cart has been cleared.')
     }
 
-    if (!cart.length) return <p>Your cart is empty</p>
+    
 
     return (
         <div className='shopping-cart-container'>
 
+
+
             <h2>Shopping Cart</h2>
            
+           {!cart.length && <p>Your cart is empty</p>}
+           
+
             {cart.map((item: Product) => (
                 
                 <div 
@@ -94,6 +101,9 @@ const ShoppingCart = () => {
             <p><strong>Total Items:</strong> {totalCount}</p>
             <p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
             <button onClick={handleCheckout}>Checkout</button>
+
+            <hr />
+            <OrderHistory />
 
         </div>
     )

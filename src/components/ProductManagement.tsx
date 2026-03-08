@@ -83,7 +83,7 @@ const ProductManagement = () => {
             <h2>Products</h2>
 
             {/* Create New Product */}
-            <div style={{ border: "2px solid green", padding: "10px", marginBottom: "20px" }}>
+            <div style={{ border: "2px solid blue", padding: "10px", marginBottom: "20px" }}>
                 <h3>Create New Product</h3>
                 <input
                     type='text'

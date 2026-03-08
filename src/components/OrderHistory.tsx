@@ -3,9 +3,10 @@
 // show all orders for a user
 
 import { useEffect, useState } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import { auth } from '../firebaseConfig';
 
 type Order = {
     id: string
@@ -18,14 +19,13 @@ const OrderHistory = () => {
     const [orders, setOrders] = useState<Order[]>([])
 
     useEffect(() => {
-        const fetchOrders = async () => {
 
-            const q = query(
-                collection(db, 'orders'),
-                where('userId', '==', 'authUser')
-            )
+        const q = query(
+            collection(db, 'orders'),
+             where('userId', '==', auth.currentUser?.uid)
+        )
 
-            const snapshot = await getDocs(q)
+        const unsubscribe = onSnapshot(q, (snapshot) => {
 
             const data = snapshot.docs.map(doc => ({
                 id: doc.id,
@@ -33,9 +33,10 @@ const OrderHistory = () => {
             })) as Order []
 
             setOrders(data)
-        }
-
-        fetchOrders()
+        })
+        
+        return () => unsubscribe()
+  
     }, [])
 
     return (
@@ -54,6 +55,7 @@ const OrderHistory = () => {
                 >
                     <p><strong>Order ID:</strong>{order.id}</p>
                     <p><strong>Total:</strong>${order.totalPrice.toFixed(2)}</p>
+                    <p><strong>Date:</strong>{order.createdAt?.toDate().toLocaleString()}</p>
 
                 </div>
             ))}
